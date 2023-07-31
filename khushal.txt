@@ -1,0 +1,5 @@
+#!/bin/bash
+a=10
+b=100
+var=$((b/a))
+echo $var

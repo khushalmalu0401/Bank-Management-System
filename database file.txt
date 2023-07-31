@@ -1,0 +1,67 @@
+create database atmsimulatorsystem;
+show databases;
+use bankpl;
+show tables; 
+
+
+create table signup(formNo varchar(20) , name varchar(20), fname varchar(20) , dob varchar(20) , gender varchar(20) , email varchar(30) , marital varchar(20), address varchar(50), city varchar(20), state varchar(20) , pincode varchar(20));
+create table signup2(formNo varchar(20), religion varchar(20), category varchar(20), income varchar(20), education varchar(20), occupation varchar(20), pan varchar(10), aadhar varchar(12), senior varchar(20), existingAccount varchar(20));
+create table signup3(formNo varchar (10), accountType1 varchar(50), cardNo1 varchar(20), pinNo1 varchar(10), facility varchar(255));
+create table login(formNo varchar(10), cardNo1 varchar(15), pinNo1 varchar(5));
+create table atm(pin varchar(10), date varchar(50), type varchar(20), amount varchar(20));
+
+alter table signup add primary key (formNo);
+alter table signup2 add foreign key (formNo) references signup(formNo);
+alter table signup3 add foreign key (formNo) references signup(formNo);
+alter table signup3 add primary key (cardNo1);
+alter table login add foreign key (cardNo1) references signup3(cardNo1);
+alter table login add foreign key (formNo) references signup(formNo);
+
+
+alter table atm add cardNo1 varchar(20);
+alter table atm add foreign key (cardNo1) references signup3(cardNo1);
+alter table atm add column member_type varchar(200); 
+alter table atm alter member_type set default "classic";
+insert into atm values("1222", "Wed Nov 23 22:27:43 IST 2022", "Deposit" , "1000", "classic");
+insert into atm(pin, date, type, amount) values("1222", "Wed Nov 23 22:27:43 IST 2022", "Deposit" , "1000");
+
+
+
+
+
+
+///Cursor ka concept
+/*SELECT * FROM bankpl.atm;*/
+delimiter #
+create procedure getamount(INOUT amountList varchar(255),IN pinno INT)
+	BEGIN
+		declare finished integer default 0;
+        declare userAmount varchar(50) default "";
+        declare amountData cursor for select amount from atm where pin = pinno;
+        declare continue handler for not found
+        set finished = 1;
+        open amountData;
+        getData: Loop
+			fetch amountData into userAmount;
+            if finished = 1
+				then 
+					leave getData;
+			end if;
+            set amountList = amountList + userAmount;
+            end loop getData;
+            close amountData;
+            end #
+           
+           set @amountList = 0;
+           call getamount(@amountList,1222);
+           select @amountList; 
+  /*drop procedure getamount;   */
+	
+    
+    
+		
+/// Trigger ka concept
+
+
+
+
